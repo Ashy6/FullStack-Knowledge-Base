@@ -1,0 +1,92 @@
+filters:
+  and:
+    - file.inFolder("react-top15-usehooks/hooks")
+    - file.ext == "md"
+formulas:
+  difficulty_stars: if(difficulty == 1, "⭐", if(difficulty == 2, "⭐⭐", if(difficulty == 3, "⭐⭐⭐", if(difficulty == 4, "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"))))
+  frequency_stars: if(frequency == 1, "⭐", if(frequency == 2, "⭐⭐", if(frequency == 3, "⭐⭐⭐", if(frequency == 4, "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"))))
+  react18_badge: if(react18, "🆕 React 18", "React 16.8+")
+  category_icon: if(category == "state-management", "📦", if(category == "side-effects", "⚡", if(category == "performance", "🚀", if(category == "concurrent", "⏱️", if(category == "context", "🌐", if(category == "refs", "🔗", if(category == "debugging", "🐛", if(category == "utility", "🔧", if(category == "external", "🔌", "🎨")))))))))
+properties:
+  hook_name:
+    displayName: Hook 名称
+  type:
+    displayName: 类型
+  formula.react18_badge:
+    displayName: 版本
+  formula.difficulty_stars:
+    displayName: 难度
+  formula.frequency_stars:
+    displayName: 使用频率
+  formula.category_icon:
+    displayName: 分类图标
+views:
+  - type: cards
+    name: 所有 Hooks - 卡片视图
+    groupBy:
+      property: category
+      direction: ASC
+    order:
+      - file.name
+      - formula.category_icon
+      - type
+      - formula.react18_badge
+      - formula.difficulty_stars
+      - formula.frequency_stars
+  - type: cards
+    name: React 18 新特性
+    filters:
+      and:
+        - react18 == true
+    order:
+      - file.name
+      - formula.category_icon
+      - type
+      - formula.difficulty_stars
+      - formula.frequency_stars
+  - type: cards
+    name: 基础 Hooks
+    filters:
+      or:
+        - hook_name == "useState"
+        - hook_name == "useEffect"
+        - hook_name == "useContext"
+    order:
+      - frequency
+      - file.name
+  - type: cards
+    name: 性能优化 Hooks
+    filters:
+      and:
+        - category == "performance"
+    order:
+      - frequency
+      - file.name
+  - type: table
+    name: Hooks 对比表格
+    groupBy:
+      property: category
+      direction: ASC
+    order:
+      - hook_name
+      - type
+      - formula.difficulty_stars
+      - formula.frequency_stars
+      - formula.react18_badge
+    summaries:
+      difficulty: Average
+      frequency: Average
+  - type: cards
+    name: 按难度排序
+    order:
+      - difficulty
+      - frequency
+      - file.name
+  - type: cards
+    name: 最常用 Hooks
+    filters:
+      and:
+        - frequency >= 4
+    order:
+      - frequency
+      - file.name
